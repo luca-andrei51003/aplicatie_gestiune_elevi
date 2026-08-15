@@ -75,17 +75,22 @@ function App() {
     if (selectedId) setStudentModal({ editingId: selectedId });
   }
   async function saveStudent(input: StudentInput) {
-    if (studentModal?.editingId) {
-      await db.updateStudent(studentModal.editingId, input);
-      flash("Fișă actualizată");
-      setStudentModal(null);
-      await refreshStudents();
-    } else {
-      const s = await db.createStudent(input);
-      setStudentModal(null);
-      await refreshStudents();
-      flash("Elev adăugat");
-      openStudent(s.id);
+    try {
+      if (studentModal?.editingId) {
+        await db.updateStudent(studentModal.editingId, input);
+        flash("Fișă actualizată");
+        setStudentModal(null);
+        await refreshStudents();
+      } else {
+        const s = await db.createStudent(input);
+        setStudentModal(null);
+        await refreshStudents();
+        flash("Elev adăugat");
+        openStudent(s.id);
+      }
+    } catch (err) {
+      console.error(err);
+      flash("Eroare la salvare: " + (err instanceof Error ? err.message : String(err)));
     }
   }
   async function deleteStudent() {

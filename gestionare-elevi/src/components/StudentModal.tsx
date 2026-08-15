@@ -31,6 +31,7 @@ export default function StudentModal({
     if (form.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) {
       return setError("Adresa de e-mail nu pare validă.");
     }
+    setError("");
     onSave(form);
   };
 
