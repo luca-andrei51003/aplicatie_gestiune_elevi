@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
 import * as db from "../lib/db";
 import type { Grade, Student } from "../lib/types";
 import { average, fmtDate, fmtGrade, gradeColors, todayIso } from "../lib/format";
-import { badge, btnPrimary, card, color, input, sectionLabel } from "../lib/ui";
+import { badge, btnGhost, btnPrimary, card, color, input, sectionLabel } from "../lib/ui";
 import DeleteButton from "./DeleteButton";
 
 export default function GradesPanel({
@@ -69,8 +70,28 @@ export default function GradesPanel({
     }, 400);
   }
 
+  const printTh: CSSProperties = {
+    textAlign: "left",
+    padding: "8px 10px",
+    borderBottom: "2px solid #333",
+    fontSize: 11,
+    textTransform: "uppercase",
+    letterSpacing: "0.06em",
+  };
+  const printTd: CSSProperties = {
+    padding: "8px 10px",
+    borderBottom: "1px solid #ddd",
+  };
+
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: 20, alignItems: "flex-start" }}>
+    <div>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
+        <button onClick={() => window.print()} style={btnGhost}>
+          ⬇ Generează raport PDF
+        </button>
+      </div>
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 20, alignItems: "flex-start" }}>
       <div style={{ ...card, overflow: "hidden", flex: "1 1 420px", minWidth: 0 }}>
         <div
           style={{
@@ -185,6 +206,42 @@ export default function GradesPanel({
           />
         </div>
       </div>
+      </div>
+
+      {createPortal(
+        <div id="ge-print-report">
+          <h1 style={{ fontFamily: "Georgia, serif", fontSize: 26, margin: "0 0 4px" }}>{student.nume}</h1>
+          <div style={{ color: "#333", marginBottom: 4 }}>
+            {[student.clasa, student.parinte].filter(Boolean).join(" · ")}
+          </div>
+          <div style={{ fontSize: 12, color: "#666", marginBottom: 20 }}>Raport generat la {fmtDate(todayIso())}</div>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+                <th style={printTh}>Materie</th>
+                <th style={printTh}>Data</th>
+                <th style={printTh}>Sursă</th>
+                <th style={printTh}>Notă</th>
+              </tr>
+            </thead>
+            <tbody>
+              {grades.map((g) => (
+                <tr key={g.id}>
+                  <td style={printTd}>{g.materie}</td>
+                  <td style={printTd}>{fmtDate(g.data)}</td>
+                  <td style={printTd}>{g.eval_id ? evalTitles[g.eval_id] || "Evaluare" : g.sursa || "—"}</td>
+                  <td style={printTd}>{fmtGrade(g.valoare)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {grades.length === 0 && <div style={{ padding: "16px 0", color: "#666" }}>Nicio notă înregistrată.</div>}
+          <div style={{ marginTop: 20, fontWeight: 700 }}>
+            Media generală: {avg === null ? "—" : fmtGrade(avg)} (din {grades.length} note)
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }
