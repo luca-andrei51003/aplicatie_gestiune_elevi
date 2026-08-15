@@ -172,7 +172,7 @@ export default function MeetingsView({
             );
           })}
           {sorted.length === 0 && (
-            <div style={{ ...card, padding: 40, textAlign: "center", color: color.mutedLight }}>
+            <div style={{ ...card, padding: 40, textAlign: "center", color: color.muted, fontWeight: 500 }}>
               Nicio întâlnire programată.
             </div>
           )}

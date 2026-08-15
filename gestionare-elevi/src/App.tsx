@@ -191,6 +191,7 @@ function App() {
             onScheduleMeeting={meetingForStudent}
             onDelete={deleteStudent}
             onOpenEval={openEval}
+            flash={flash}
           />
         )}
 

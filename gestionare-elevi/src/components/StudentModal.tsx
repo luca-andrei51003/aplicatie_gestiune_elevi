@@ -44,27 +44,27 @@ export default function StudentModal({
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
           <label style={{ ...label, gridColumn: "span 2" }}>
             Nume complet
-            <input style={input} value={form.nume} onChange={set("nume")} placeholder="Ana Popescu" />
+            <input style={input} value={form.nume} onChange={set("nume")} placeholder="Numele și prenumele elevului" />
           </label>
           <label style={label}>
             Clasa
-            <input style={input} value={form.clasa} onChange={set("clasa")} placeholder="III B" />
+            <input style={input} value={form.clasa} onChange={set("clasa")} placeholder="Completează clasa" />
           </label>
           <label style={label}>
             Vârsta
-            <input style={input} value={form.varsta} onChange={set("varsta")} placeholder="9" />
+            <input style={input} value={form.varsta} onChange={set("varsta")} placeholder="Completează vârsta" />
           </label>
           <label style={label}>
-            Părinte / tutore
-            <input style={input} value={form.parinte} onChange={set("parinte")} placeholder="Maria Popescu" />
+            Părinte
+            <input style={input} value={form.parinte} onChange={set("parinte")} placeholder="Numele părintelui" />
           </label>
           <label style={label}>
             Telefon
-            <input style={input} value={form.telefon} onChange={set("telefon")} placeholder="0722 000 000" />
+            <input style={input} value={form.telefon} onChange={set("telefon")} placeholder="Număr de telefon" />
           </label>
           <label style={{ ...label, gridColumn: "span 2" }}>
             E-mail părinte
-            <input style={input} value={form.email} onChange={set("email")} placeholder="maria.popescu@email.ro" />
+            <input style={input} value={form.email} onChange={set("email")} placeholder="Adresa de e-mail a părintelui" />
           </label>
         </div>
         {error && (

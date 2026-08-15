@@ -3,13 +3,16 @@ import * as db from "../lib/db";
 import type { Grade, Student } from "../lib/types";
 import { average, fmtDate, fmtGrade, gradeColors, todayIso } from "../lib/format";
 import { badge, btnPrimary, card, color, input, sectionLabel } from "../lib/ui";
+import DeleteButton from "./DeleteButton";
 
 export default function GradesPanel({
   student,
   onOpenEval,
+  flash,
 }: {
   student: Student;
   onOpenEval: (evalId: string) => void;
+  flash: (msg: string) => void;
 }) {
   const [grades, setGrades] = useState<Grade[]>([]);
   const [evalTitles, setEvalTitles] = useState<Record<string, string>>({});
@@ -41,11 +44,16 @@ export default function GradesPanel({
   const avg = average(grades.map((g) => g.valoare));
 
   async function addGrade() {
-    if (!materie || !valoare) return;
-    await db.createGrade(student.id, { materie, valoare, data: dataNota || todayIso(), sursa });
-    setMaterie("");
-    setValoare("");
-    await refresh();
+    if (!materie || !valoare) return flash("Completează materia și nota");
+    try {
+      await db.createGrade(student.id, { materie, valoare, data: dataNota || todayIso(), sursa });
+      setMaterie("");
+      setValoare("");
+      await refresh();
+    } catch (err) {
+      console.error(err);
+      flash("Eroare la salvarea notei: " + (err instanceof Error ? err.message : String(err)));
+    }
   }
 
   async function removeGrade(id: string) {
@@ -117,12 +125,7 @@ export default function GradesPanel({
                 <span style={badge(c.bg, c.fg)}>{fmtGrade(g.valoare)}</span>
               </div>
               <div style={{ textAlign: "right" }}>
-                <button
-                  onClick={() => removeGrade(g.id)}
-                  style={{ border: 0, background: "transparent", color: "#b4c4d2", cursor: "pointer", fontSize: 16 }}
-                >
-                  ×
-                </button>
+                <DeleteButton onClick={() => removeGrade(g.id)} title="Șterge nota" />
               </div>
             </div>
           );
@@ -144,7 +147,7 @@ export default function GradesPanel({
             <option>Temă</option>
             <option>Ședință individuală</option>
           </select>
-          <input value={valoare} onChange={(e) => setValoare(e.target.value)} placeholder="9" style={{ ...input, textAlign: "center", fontWeight: 700 }} />
+          <input value={valoare} onChange={(e) => setValoare(e.target.value)} placeholder="notă" style={{ ...input, textAlign: "center", fontWeight: 700 }} />
           <button onClick={addGrade} style={{ ...btnPrimary, padding: 9 }}>
             +
           </button>

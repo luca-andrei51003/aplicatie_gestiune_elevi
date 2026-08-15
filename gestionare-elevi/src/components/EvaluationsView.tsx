@@ -3,6 +3,7 @@ import * as db from "../lib/db";
 import type { EvalStudentRow, Evaluation, Student } from "../lib/types";
 import { fmtDate } from "../lib/format";
 import { btnDanger, btnPink, btnPrimary, card, color, input, sectionLabel } from "../lib/ui";
+import DeleteButton from "./DeleteButton";
 
 export default function EvaluationsView({
   evals,
@@ -137,13 +138,13 @@ export default function EvaluationsView({
             );
           })}
           {evals.length === 0 && (
-            <div style={{ ...card, padding: 40, textAlign: "center", color: color.mutedLight }}>Nicio evaluare programată.</div>
+            <div style={{ ...card, padding: 40, textAlign: "center", color: color.muted, fontWeight: 500 }}>Nicio evaluare programată.</div>
           )}
         </div>
 
         <div style={{ ...card, padding: "22px 24px", flex: "1 1 460px", minWidth: 0 }}>
           {!ev && (
-            <div style={{ padding: "60px 20px", textAlign: "center", color: color.mutedLight }}>
+            <div style={{ padding: "60px 20px", textAlign: "center", color: color.muted, fontWeight: 500 }}>
               Selectează o evaluare din stânga sau creează una nouă.
             </div>
           )}
@@ -286,12 +287,7 @@ export default function EvaluationsView({
                       </a>
                     </div>
                     <div style={{ textAlign: "right" }}>
-                      <button
-                        onClick={() => removeFromEval(r.student_id)}
-                        style={{ border: 0, background: "transparent", color: "#b4c4d2", cursor: "pointer", fontSize: 16 }}
-                      >
-                        ×
-                      </button>
+                      <DeleteButton onClick={() => removeFromEval(r.student_id)} title="Scoate elevul din evaluare" />
                     </div>
                   </div>
                 ))}

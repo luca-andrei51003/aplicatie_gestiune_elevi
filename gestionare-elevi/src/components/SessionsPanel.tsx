@@ -162,7 +162,7 @@ export default function SessionsPanel({ studentId, durataImplicita = 45 }: { stu
 
       <div style={{ ...card, padding: "22px 24px", flex: "1 1 420px", minWidth: 0 }}>
         {!selected && (
-          <div style={{ padding: "60px 20px", textAlign: "center", color: color.mutedLight }}>
+          <div style={{ padding: "60px 20px", textAlign: "center", color: color.muted, fontWeight: 500 }}>
             Selectează o fișă din stânga sau creează una nouă.
           </div>
         )}
@@ -195,9 +195,8 @@ export default function SessionsPanel({ studentId, durataImplicita = 45 }: { stu
                   style={{ ...input, textTransform: "none", letterSpacing: 0, fontWeight: 500, width: "auto" }}
                 >
                   <option>Individuală</option>
-                  <option>Remedială</option>
-                  <option>Consiliere</option>
-                  <option>Evaluare</option>
+                  <option>Grupă particulară</option>
+                  <option>Didacto</option>
                 </select>
               </label>
               <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10 }}>

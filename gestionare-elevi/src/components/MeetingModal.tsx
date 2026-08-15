@@ -1,7 +1,6 @@
 import { useState } from "react";
 import type { MeetingInput } from "../lib/db";
 import type { Student } from "../lib/types";
-import { shiftDays } from "../lib/format";
 import { btnGhost, btnPink, color, input, label, modalBackdrop, modalCard } from "../lib/ui";
 
 export default function MeetingModal({
@@ -16,8 +15,8 @@ export default function MeetingModal({
   onSave: (input: MeetingInput) => Promise<void> | void;
 }) {
   const [studentId, setStudentId] = useState(defaultStudentId ?? students[0]?.id ?? "");
-  const [data, setData] = useState(shiftDays(3));
-  const [ora, setOra] = useState("16:30");
+  const [data, setData] = useState("");
+  const [ora, setOra] = useState("");
   const [link, setLink] = useState("");
   const [agenda, setAgenda] = useState("");
   const [error, setError] = useState("");
@@ -75,7 +74,7 @@ export default function MeetingModal({
           </label>
           <label style={label}>
             Ora
-            <input style={input} value={ora} onChange={(e) => setOra(e.target.value)} placeholder="16:30" />
+            <input style={input} value={ora} onChange={(e) => setOra(e.target.value)} placeholder="Completează ora" />
           </label>
           <label style={{ ...label, gridColumn: "span 2" }}>
             Link video
@@ -83,7 +82,7 @@ export default function MeetingModal({
               style={input}
               value={link}
               onChange={(e) => setLink(e.target.value)}
-              placeholder="https://meet.example.com/cabinet-12"
+              placeholder="Adaugă linkul întâlnirii video"
             />
           </label>
           <label style={{ ...label, gridColumn: "span 2" }}>
@@ -92,7 +91,7 @@ export default function MeetingModal({
               style={{ ...input, minHeight: 70, resize: "vertical", lineHeight: 1.55 }}
               value={agenda}
               onChange={(e) => setAgenda(e.target.value)}
-              placeholder="Progres la citire, temele de acasă, plan pentru trimestrul următor…"
+              placeholder="Descrie pe scurt ce urmează să discutați"
             />
           </label>
         </div>

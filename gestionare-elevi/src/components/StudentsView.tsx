@@ -163,7 +163,7 @@ export default function StudentsView({
           );
         })}
         {filtered.length === 0 && (
-          <div style={{ padding: 40, textAlign: "center", color: color.mutedLight }}>Niciun elev nu corespunde căutării.</div>
+          <div style={{ padding: 40, textAlign: "center", color: color.muted, fontWeight: 500 }}>Niciun elev nu corespunde căutării.</div>
         )}
       </div>
     </div>

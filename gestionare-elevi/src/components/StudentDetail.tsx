@@ -15,6 +15,7 @@ export default function StudentDetail({
   onScheduleMeeting,
   onDelete,
   onOpenEval,
+  flash,
 }: {
   student: Student;
   initialTab?: Tab;
@@ -23,6 +24,7 @@ export default function StudentDetail({
   onScheduleMeeting: () => void;
   onDelete: () => void;
   onOpenEval: (evalId: string) => void;
+  flash: (msg: string) => void;
 }) {
   const [tab, setTab] = useState<Tab>(initialTab ?? "sesiuni");
 
@@ -98,7 +100,7 @@ export default function StudentDetail({
       </div>
 
       {tab === "sesiuni" && <SessionsPanel studentId={student.id} />}
-      {tab === "note" && <GradesPanel student={student} onOpenEval={onOpenEval} />}
+      {tab === "note" && <GradesPanel student={student} onOpenEval={onOpenEval} flash={flash} />}
     </div>
   );
 }
