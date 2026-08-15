@@ -1,0 +1,95 @@
+import { useState } from "react";
+import type { StudentInput } from "../lib/db";
+import type { Student } from "../lib/types";
+import { btnGhost, btnPrimary, color, input, label, modalBackdrop, modalCard } from "../lib/ui";
+
+export default function StudentModal({
+  editing,
+  onCancel,
+  onSave,
+}: {
+  editing: Student | null;
+  onCancel: () => void;
+  onSave: (input: StudentInput) => Promise<void> | void;
+}) {
+  const [form, setForm] = useState<StudentInput>({
+    nume: editing?.nume ?? "",
+    clasa: editing?.clasa ?? "",
+    varsta: editing?.varsta ?? "",
+    parinte: editing?.parinte ?? "",
+    email: editing?.email ?? "",
+    telefon: editing?.telefon ?? "",
+    notite: editing?.notite ?? "",
+  });
+  const [error, setError] = useState("");
+
+  const set = (field: keyof StudentInput) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    setForm((f) => ({ ...f, [field]: e.target.value }));
+
+  const save = () => {
+    if (!form.nume.trim()) return setError("Numele elevului este obligatoriu.");
+    if (form.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) {
+      return setError("Adresa de e-mail nu pare validă.");
+    }
+    onSave(form);
+  };
+
+  return (
+    <div style={modalBackdrop}>
+      <div className="ge-in" style={modalCard}>
+        <h2 style={{ margin: "0 0 18px", fontFamily: "'Instrument Serif', serif", fontSize: 28, fontWeight: 400 }}>
+          {editing ? "Editează fișa elevului" : "Elev nou"}
+        </h2>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+          <label style={{ ...label, gridColumn: "span 2" }}>
+            Nume complet
+            <input style={input} value={form.nume} onChange={set("nume")} placeholder="Ana Popescu" />
+          </label>
+          <label style={label}>
+            Clasa
+            <input style={input} value={form.clasa} onChange={set("clasa")} placeholder="III B" />
+          </label>
+          <label style={label}>
+            Vârsta
+            <input style={input} value={form.varsta} onChange={set("varsta")} placeholder="9" />
+          </label>
+          <label style={label}>
+            Părinte / tutore
+            <input style={input} value={form.parinte} onChange={set("parinte")} placeholder="Maria Popescu" />
+          </label>
+          <label style={label}>
+            Telefon
+            <input style={input} value={form.telefon} onChange={set("telefon")} placeholder="0722 000 000" />
+          </label>
+          <label style={{ ...label, gridColumn: "span 2" }}>
+            E-mail părinte
+            <input style={input} value={form.email} onChange={set("email")} placeholder="maria.popescu@email.ro" />
+          </label>
+        </div>
+        {error && (
+          <div
+            style={{
+              marginTop: 14,
+              background: color.dangerTint,
+              border: `1px solid ${color.dangerBorder}`,
+              color: color.danger,
+              borderRadius: 10,
+              padding: "10px 12px",
+              fontSize: 13,
+            }}
+          >
+            {error}
+          </div>
+        )}
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 22 }}>
+          <button style={btnGhost} onClick={onCancel}>
+            Renunță
+          </button>
+          <button style={btnPrimary} onClick={save}>
+            Salvează
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

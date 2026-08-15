@@ -1,0 +1,40 @@
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: #f3f7fb;
+  -webkit-font-smoothing: antialiased;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  color: #1e2b36;
+}
+a { color: #34719e; text-decoration: none; }
+a:hover { color: #c2668c; }
+input, textarea, select, button { font-family: inherit; font-size: inherit; color: inherit; }
+input:focus, textarea:focus, select:focus {
+  outline: 2px solid #bcd8ee;
+  outline-offset: 1px;
+}
+::selection { background: #f9dbe6; }
+
+[contenteditable]:empty:before { content: attr(data-ph); color: #9fb2c4; }
+[contenteditable] h3 { font-size: 17px; margin: 18px 0 6px; }
+[contenteditable] ul, [contenteditable] ol { margin: 8px 0 8px 20px; padding: 0; }
+[contenteditable] blockquote {
+  margin: 12px 0;
+  padding: 4px 0 4px 14px;
+  border-left: 3px solid #f2c6d8;
+  color: #5b7186;
+  font-style: italic;
+}
+[contenteditable] p { margin: 0 0 10px; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: #d7e3ee; border-radius: 6px; border: 3px solid #f3f7fb; }
+
+@keyframes ge-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.ge-in { animation: ge-in 0.2s ease both; }
+
+button { transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease; }
