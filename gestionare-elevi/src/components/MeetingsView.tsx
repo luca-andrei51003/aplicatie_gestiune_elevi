@@ -150,7 +150,6 @@ export default function MeetingsView({
                   </div>
                   <div style={{ fontSize: 13, color: color.muted, marginTop: 6 }}>{m.agenda || "fără agendă"}</div>
                   <div style={{ display: "flex", gap: 14, marginTop: 8, fontSize: 12, color: color.mutedLight, flexWrap: "wrap" }}>
-                    <span>↗ {m.link || "link nesetat"}</span>
                     <span>datele de contact sunt în fișa elevului</span>
                   </div>
                 </div>

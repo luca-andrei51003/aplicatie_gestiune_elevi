@@ -17,7 +17,6 @@ export default function MeetingModal({
   const [studentId, setStudentId] = useState(defaultStudentId ?? students[0]?.id ?? "");
   const [data, setData] = useState("");
   const [ora, setOra] = useState("");
-  const [link, setLink] = useState("");
   const [agenda, setAgenda] = useState("");
   const [error, setError] = useState("");
 
@@ -30,7 +29,7 @@ export default function MeetingModal({
       student_id: studentId,
       data,
       ora: ora || "16:00",
-      link: link || "link nesetat",
+      link: "",
       agenda,
       status: "Programată",
     });
@@ -75,15 +74,6 @@ export default function MeetingModal({
           <label style={label}>
             Ora
             <input style={input} value={ora} onChange={(e) => setOra(e.target.value)} placeholder="Completează ora" />
-          </label>
-          <label style={{ ...label, gridColumn: "span 2" }}>
-            Link video
-            <input
-              style={input}
-              value={link}
-              onChange={(e) => setLink(e.target.value)}
-              placeholder="Adaugă linkul întâlnirii video"
-            />
           </label>
           <label style={{ ...label, gridColumn: "span 2" }}>
             Agenda discuției
