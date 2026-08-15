@@ -62,7 +62,7 @@ export default function StudentDetail({
         <div style={{ flex: 1, minWidth: 220 }}>
           <h1 style={{ margin: 0, fontFamily: "'Instrument Serif', serif", fontSize: 36, fontWeight: 400 }}>{student.nume}</h1>
           <div style={{ color: color.muted, marginTop: 4 }}>
-            Clasa {student.clasa} · {student.varsta} ani · {student.parinte} · {student.telefon}
+            {student.varsta} ani · {student.parinte} · {student.telefon}
           </div>
         </div>
         <div style={{ display: "flex", gap: 8 }}>

@@ -1,0 +1,1 @@
+ALTER TABLE students ADD COLUMN telefon_elev TEXT NOT NULL DEFAULT '';

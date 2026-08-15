@@ -6,6 +6,7 @@ export interface Student {
   parinte: string;
   email: string;
   telefon: string;
+  telefon_elev: string;
   notite: string;
 }
 

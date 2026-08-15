@@ -52,21 +52,6 @@ export default function MeetingModal({
               ))}
             </select>
           </label>
-          <div
-            style={{
-              gridColumn: "span 2",
-              background: color.blueTint2,
-              border: `1px solid ${color.inputBorder}`,
-              borderRadius: 10,
-              padding: "11px 13px",
-              fontSize: 12,
-              color: "#5b7186",
-              lineHeight: 1.5,
-            }}
-          >
-            Întâlnirile se desfășoară online. Invitația se trimite automat pe adresa părintelui din fișa elevului — datele
-            de contact se editează doar acolo.
-          </div>
           <label style={label}>
             Data
             <input type="date" style={input} value={data} onChange={(e) => setData(e.target.value)} />

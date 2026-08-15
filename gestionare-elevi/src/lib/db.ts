@@ -24,9 +24,9 @@ export async function createStudent(input: StudentInput): Promise<Student> {
   const db = await getDb();
   const id = uid();
   await db.execute(
-    `INSERT INTO students (id, nume, clasa, varsta, parinte, email, telefon, notite)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-    [id, input.nume, input.clasa, input.varsta, input.parinte, input.email, input.telefon, input.notite]
+    `INSERT INTO students (id, nume, clasa, varsta, parinte, email, telefon, telefon_elev, notite)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+    [id, input.nume, input.clasa, input.varsta, input.parinte, input.email, input.telefon, input.telefon_elev, input.notite]
   );
   return { id, ...input };
 }

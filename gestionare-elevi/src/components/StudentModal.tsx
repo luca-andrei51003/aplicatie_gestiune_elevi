@@ -19,11 +19,12 @@ export default function StudentModal({
     parinte: editing?.parinte ?? "",
     email: editing?.email ?? "",
     telefon: editing?.telefon ?? "",
+    telefon_elev: editing?.telefon_elev ?? "",
     notite: editing?.notite ?? "",
   });
   const [error, setError] = useState("");
 
-  const set = (field: keyof StudentInput) => (e: React.ChangeEvent<HTMLInputElement>) =>
+  const set = (field: keyof StudentInput) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm((f) => ({ ...f, [field]: e.target.value }));
 
   const save = () => {
@@ -48,7 +49,11 @@ export default function StudentModal({
           </label>
           <label style={label}>
             Clasa
-            <input style={input} value={form.clasa} onChange={set("clasa")} placeholder="Completează clasa" />
+            <select style={input} value={form.clasa} onChange={set("clasa")}>
+              <option value="">Alege tipul</option>
+              <option value="Particular">Particular</option>
+              <option value="Didacto">Didacto</option>
+            </select>
           </label>
           <label style={label}>
             Vârsta
@@ -59,8 +64,17 @@ export default function StudentModal({
             <input style={input} value={form.parinte} onChange={set("parinte")} placeholder="Numele părintelui" />
           </label>
           <label style={label}>
-            Telefon
+            Telefon părinte
             <input style={input} value={form.telefon} onChange={set("telefon")} placeholder="Număr de telefon" />
+          </label>
+          <label style={{ ...label, gridColumn: "span 2" }}>
+            Telefon elev <span style={{ textTransform: "none", fontWeight: 500, letterSpacing: 0 }}>(opțional)</span>
+            <input
+              style={input}
+              value={form.telefon_elev}
+              onChange={set("telefon_elev")}
+              placeholder="Dacă elevul are telefon propriu"
+            />
           </label>
           <label style={{ ...label, gridColumn: "span 2" }}>
             E-mail părinte

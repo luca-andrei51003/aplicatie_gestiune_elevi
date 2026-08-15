@@ -1,5 +1,6 @@
 import type { View } from "../App";
 import { color } from "../lib/ui";
+import SidebarFloral from "./SidebarFloral";
 
 interface NavDef {
   key: "elevi" | "parinti" | "evaluari";
@@ -37,15 +38,15 @@ export default function Sidebar({
         background: `linear-gradient(180deg, ${color.sidebarBgAlt}, ${color.sidebarBg})`,
         borderRight: `1px solid ${color.sidebarBorder}`,
         padding: "22px 16px",
-        display: "flex",
-        flexDirection: "column",
-        gap: 26,
         position: "sticky",
         top: 0,
         height: "100vh",
         boxShadow: "4px 0 24px -12px rgba(6,12,18,0.5)",
+        overflow: "hidden",
       }}
     >
+      <SidebarFloral />
+      <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", gap: 26, height: "100%" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 11, padding: "0 6px" }}>
         <div
           style={{
@@ -144,6 +145,7 @@ export default function Sidebar({
         >
           Vezi calendarul
         </button>
+      </div>
       </div>
     </aside>
   );

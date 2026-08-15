@@ -19,22 +19,17 @@ export default function StudentsView({
   const [sessionSummary, setSessionSummary] = useState<Record<string, { cnt: number; last_data: string }>>({});
   const [gradeSummary, setGradeSummary] = useState<Record<string, { cnt: number; avg: number }>>({});
   const [totalSessions, setTotalSessions] = useState(0);
-  const [overallAvg, setOverallAvg] = useState<number | null>(null);
 
   useEffect(() => {
     (async () => {
-      const [sess, grades, total, allGrades] = await Promise.all([
+      const [sess, grades, total] = await Promise.all([
         db.listSessionSummary(),
         db.listGradeSummary(),
         db.countSessions(),
-        db.listAllGrades(),
       ]);
       setSessionSummary(Object.fromEntries(sess.map((r) => [r.student_id, r])));
       setGradeSummary(Object.fromEntries(grades.map((r) => [r.student_id, r])));
       setTotalSessions(total);
-      setOverallAvg(
-        allGrades.length ? allGrades.reduce((a, g) => a + (Number(g.valoare) || 0), 0) / allGrades.length : null
-      );
     })();
   }, [students]);
 
@@ -48,7 +43,6 @@ export default function StudentsView({
     { label: "Elevi activi", value: String(students.length), note: "în evidență" },
     { label: "Fișe de ședință", value: String(totalSessions), note: "total înregistrate" },
     { label: "Întâlniri viitoare", value: String(meetingsCount), note: "cu părinții" },
-    { label: "Medie generală", value: overallAvg === null ? "—" : fmtGrade(overallAvg), note: "scala 1–10" },
   ];
 
   return (
@@ -73,7 +67,7 @@ export default function StudentsView({
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginTop: 26 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginTop: 26 }}>
         {stats.map((s) => (
           <div key={s.label} style={{ ...card, padding: "16px 18px" }}>
             <div style={sectionLabel}>{s.label}</div>
@@ -87,7 +81,7 @@ export default function StudentsView({
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "2.2fr 0.8fr 1.6fr 1fr 0.9fr 40px",
+            gridTemplateColumns: "2.6fr 1.8fr 1fr 0.9fr 40px",
             gap: 12,
             padding: "13px 20px",
             background: "#f8fbfd",
@@ -96,7 +90,6 @@ export default function StudentsView({
           }}
         >
           <div>Elev</div>
-          <div>Clasa</div>
           <div>Părinte / contact</div>
           <div>Ședințe</div>
           <div>Medie</div>
@@ -112,7 +105,7 @@ export default function StudentsView({
               onClick={() => onOpenStudent(s.id)}
               style={{
                 display: "grid",
-                gridTemplateColumns: "2.2fr 0.8fr 1.6fr 1fr 0.9fr 40px",
+                gridTemplateColumns: "2.6fr 1.8fr 1fr 0.9fr 40px",
                 gap: 12,
                 padding: "14px 20px",
                 borderBottom: `1px solid ${color.borderLight}`,
@@ -147,11 +140,10 @@ export default function StudentsView({
                   </div>
                 </div>
               </div>
-              <div style={{ color: "#4a6379" }}>{s.clasa}</div>
               <div style={{ minWidth: 0 }}>
-                <div style={{ color: "#4a6379" }}>{s.parinte}</div>
-                <div style={{ fontSize: 12, color: color.mutedLight, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {s.email}
+                <div style={{ color: "#4a6379" }}>{s.telefon_elev ? s.nume : s.parinte}</div>
+                <div style={{ fontSize: 12, color: color.muted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {(s.telefon_elev || s.telefon) || "—"}
                 </div>
               </div>
               <div style={{ color: "#4a6379" }}>{sess?.cnt ?? 0}</div>
