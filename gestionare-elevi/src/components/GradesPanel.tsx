@@ -5,6 +5,7 @@ import type { Grade, Student } from "../lib/types";
 import { average, fmtDate, fmtGrade, gradeColors, todayIso } from "../lib/format";
 import { badge, btnGhost, btnPrimary, card, color, input, sectionLabel } from "../lib/ui";
 import DeleteButton from "./DeleteButton";
+import ConfirmDialog from "./ConfirmDialog";
 
 export default function GradesPanel({
   student,
@@ -22,6 +23,7 @@ export default function GradesPanel({
   const [sursa, setSursa] = useState("Oral");
   const [valoare, setValoare] = useState("");
   const [notite, setNotite] = useState(student.notite);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const notiteTimer = useRef<number | undefined>(undefined);
 
   async function refresh() {
@@ -59,6 +61,7 @@ export default function GradesPanel({
 
   async function removeGrade(id: string) {
     await db.deleteGrade(id);
+    setConfirmDeleteId(null);
     await refresh();
   }
 
@@ -146,7 +149,7 @@ export default function GradesPanel({
                 <span style={badge(c.bg, c.fg)}>{fmtGrade(g.valoare)}</span>
               </div>
               <div style={{ textAlign: "right" }}>
-                <DeleteButton onClick={() => removeGrade(g.id)} title="Șterge nota" />
+                <DeleteButton onClick={() => setConfirmDeleteId(g.id)} title="Șterge nota" />
               </div>
             </div>
           );
@@ -241,6 +244,19 @@ export default function GradesPanel({
           </div>
         </div>,
         document.body
+      )}
+
+      {confirmDeleteId && (
+        <ConfirmDialog
+          title="Ștergi nota?"
+          message={
+            "Sigur vrei să ștergi nota la " +
+            (grades.find((g) => g.id === confirmDeleteId)?.materie || "această materie") +
+            "? Acțiunea nu poate fi anulată."
+          }
+          onCancel={() => setConfirmDeleteId(null)}
+          onConfirm={() => removeGrade(confirmDeleteId)}
+        />
       )}
     </div>
   );

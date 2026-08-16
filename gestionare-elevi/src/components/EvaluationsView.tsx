@@ -149,7 +149,7 @@ export default function EvaluationsView({
             </div>
           )}
           {ev && (
-            <div>
+            <div key={ev.id}>
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
                 <label style={{ ...sectionLabel, display: "flex", flexDirection: "column", gap: 5, flex: 1, minWidth: 200 }}>
                   Titlu
