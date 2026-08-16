@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import * as db from "../lib/db";
 import type { EvalStudentRow, Evaluation, Student } from "../lib/types";
-import { fmtDate } from "../lib/format";
-import { btnDanger, btnPink, btnPrimary, card, color, input, sectionLabel } from "../lib/ui";
+import { fmtDate, fmtGrade, gradeColors } from "../lib/format";
+import { badge, btnDanger, btnGhost, btnPink, btnPrimary, card, color, input, sectionLabel } from "../lib/ui";
 import DeleteButton from "./DeleteButton";
+import ConfirmDialog from "./ConfirmDialog";
 
 export default function EvaluationsView({
   evals,
@@ -28,6 +29,7 @@ export default function EvaluationsView({
   const [rows, setRows] = useState<EvalStudentRow[]>([]);
   const [addStudentId, setAddStudentId] = useState("");
   const [summary, setSummary] = useState<Record<string, { total: number; done: number }>>({});
+  const [reopenStage, setReopenStage] = useState<0 | 1 | 2>(0);
 
   async function refreshRows() {
     if (!ev) return setRows([]);
@@ -42,6 +44,7 @@ export default function EvaluationsView({
   useEffect(() => {
     refreshRows();
     setAddStudentId("");
+    setReopenStage(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedEvalId]);
 
@@ -80,7 +83,16 @@ export default function EvaluationsView({
   async function publish() {
     if (!ev) return;
     const n = await db.publishEval(ev.id);
-    flash(n ? n + " note trecute în fișe" : "Nu există note completate");
+    flash(n ? n + " note trecute în fișe · evaluare închisă" : "Nu există note completate");
+    if (n) await onRefreshEvals();
+  }
+
+  async function reopen() {
+    if (!ev) return;
+    await db.reopenEval(ev.id);
+    setReopenStage(0);
+    await onRefreshEvals();
+    flash("Evaluare redeschisă");
   }
 
   async function removeEval() {
@@ -122,7 +134,10 @@ export default function EvaluationsView({
                 }}
               >
                 <div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "baseline" }}>
-                  <span style={{ fontWeight: 700 }}>{e.titlu}</span>
+                  <span style={{ fontWeight: 700, display: "flex", alignItems: "center", gap: 7 }}>
+                    {e.titlu}
+                    {!!e.closed && <span style={badge("#f1f6fa", "#5b7186")}>Închisă</span>}
+                  </span>
                   <span style={{ fontSize: 12, color: color.muted, whiteSpace: "nowrap" }}>{fmtDate(e.data)}</span>
                 </div>
                 <div style={{ fontSize: 12, color: color.muted, marginTop: 5 }}>
@@ -150,21 +165,47 @@ export default function EvaluationsView({
           )}
           {ev && (
             <div key={ev.id}>
+              {!!ev.closed && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 12,
+                    flexWrap: "wrap",
+                    background: "#f1f6fa",
+                    border: `1px solid ${color.border}`,
+                    borderRadius: 11,
+                    padding: "10px 14px",
+                    marginBottom: 16,
+                  }}
+                >
+                  <span style={{ fontSize: 13, color: "#5b7186" }}>
+                    🔒 Evaluare închisă — notele au fost trecute în fișele elevilor. Detaliile nu mai pot fi editate.
+                  </span>
+                  <button style={btnGhost} onClick={() => setReopenStage(1)}>
+                    Redeschide evaluarea
+                  </button>
+                </div>
+              )}
+
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
                 <label style={{ ...sectionLabel, display: "flex", flexDirection: "column", gap: 5, flex: 1, minWidth: 200 }}>
                   Titlu
                   <input
                     defaultValue={ev.titlu}
+                    disabled={!!ev.closed}
                     onBlur={(e) => patchEval({ titlu: e.target.value })}
-                    style={{ ...input, textTransform: "none", letterSpacing: 0, fontWeight: 600 }}
+                    style={{ ...input, textTransform: "none", letterSpacing: 0, fontWeight: 600, background: ev.closed ? "#f8fbfd" : "#fff" }}
                   />
                 </label>
                 <label style={{ ...sectionLabel, display: "flex", flexDirection: "column", gap: 5 }}>
                   Materie
                   <input
                     defaultValue={ev.materie}
+                    disabled={!!ev.closed}
                     onBlur={(e) => patchEval({ materie: e.target.value })}
-                    style={{ ...input, textTransform: "none", letterSpacing: 0, fontWeight: 500 }}
+                    style={{ ...input, textTransform: "none", letterSpacing: 0, fontWeight: 500, background: ev.closed ? "#f8fbfd" : "#fff" }}
                   />
                 </label>
                 <label style={{ ...sectionLabel, display: "flex", flexDirection: "column", gap: 5 }}>
@@ -172,16 +213,18 @@ export default function EvaluationsView({
                   <input
                     type="date"
                     defaultValue={ev.data}
+                    disabled={!!ev.closed}
                     onBlur={(e) => patchEval({ data: e.target.value })}
-                    style={{ ...input, textTransform: "none", letterSpacing: 0, fontWeight: 500, width: "auto" }}
+                    style={{ ...input, textTransform: "none", letterSpacing: 0, fontWeight: 500, width: "auto", background: ev.closed ? "#f8fbfd" : "#fff" }}
                   />
                 </label>
                 <label style={{ ...sectionLabel, display: "flex", flexDirection: "column", gap: 5 }}>
                   Ora
                   <input
                     defaultValue={ev.ora}
+                    disabled={!!ev.closed}
                     onBlur={(e) => patchEval({ ora: e.target.value })}
-                    style={{ ...input, width: 90, textTransform: "none", letterSpacing: 0, fontWeight: 500 }}
+                    style={{ ...input, width: 90, textTransform: "none", letterSpacing: 0, fontWeight: 500, background: ev.closed ? "#f8fbfd" : "#fff" }}
                   />
                 </label>
                 <button onClick={removeEval} style={btnDanger}>
@@ -193,27 +236,30 @@ export default function EvaluationsView({
                 <div style={{ ...sectionLabel, marginBottom: 7 }}>Descriere / competențe evaluate</div>
                 <textarea
                   defaultValue={ev.descriere}
+                  disabled={!!ev.closed}
                   onBlur={(e) => patchEval({ descriere: e.target.value })}
                   placeholder="Ce se evaluează, structura testului, bareme…"
-                  style={{ ...input, minHeight: 70, resize: "vertical", lineHeight: 1.55, background: "#fbfdfe" }}
+                  style={{ ...input, minHeight: 70, resize: "vertical", lineHeight: 1.55, background: ev.closed ? "#f8fbfd" : "#fbfdfe" }}
                 />
               </div>
 
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "24px 0 10px", gap: 12, flexWrap: "wrap" }}>
                 <div style={{ fontWeight: 700 }}>Elevi înscriși și note</div>
-                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                  <select value={addStudentId} onChange={(e) => setAddStudentId(e.target.value)} style={input}>
-                    <option value="">Adaugă elev…</option>
-                    {options.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.nume}
-                      </option>
-                    ))}
-                  </select>
-                  <button onClick={addToEval} style={{ ...btnPrimary, whiteSpace: "nowrap" }}>
-                    Adaugă
-                  </button>
-                </div>
+                {!ev.closed && (
+                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                    <select value={addStudentId} onChange={(e) => setAddStudentId(e.target.value)} style={input}>
+                      <option value="">Adaugă elev…</option>
+                      {options.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.nume}
+                        </option>
+                      ))}
+                    </select>
+                    <button onClick={addToEval} style={{ ...btnPrimary, whiteSpace: "nowrap" }}>
+                      Adaugă
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div style={{ border: `1px solid ${color.border}`, borderRadius: 13, overflow: "hidden" }}>
@@ -267,12 +313,22 @@ export default function EvaluationsView({
                     </div>
                     <div style={{ color: color.muted }}>{r.clasa}</div>
                     <div>
-                      <input
-                        value={r.nota ?? ""}
-                        onChange={(e) => setNota(r.student_id, e.target.value)}
-                        placeholder="—"
-                        style={{ ...input, width: 70, fontWeight: 700, textAlign: "center" }}
-                      />
+                      {ev.closed ? (
+                        r.nota ? (
+                          <span style={badge(gradeColors(r.nota).bg, gradeColors(r.nota).fg)} title="Trecută în fișă">
+                            ✓ {fmtGrade(r.nota)}
+                          </span>
+                        ) : (
+                          <span style={{ color: color.mutedLight }}>—</span>
+                        )
+                      ) : (
+                        <input
+                          value={r.nota ?? ""}
+                          onChange={(e) => setNota(r.student_id, e.target.value)}
+                          placeholder="—"
+                          style={{ ...input, width: 70, fontWeight: 700, textAlign: "center" }}
+                        />
+                      )}
                     </div>
                     <div>
                       <a
@@ -287,21 +343,42 @@ export default function EvaluationsView({
                       </a>
                     </div>
                     <div style={{ textAlign: "right" }}>
-                      <DeleteButton onClick={() => removeFromEval(r.student_id)} title="Scoate elevul din evaluare" />
+                      {!ev.closed && <DeleteButton onClick={() => removeFromEval(r.student_id)} title="Scoate elevul din evaluare" />}
                     </div>
                   </div>
                 ))}
               </div>
-              <div style={{ display: "flex", gap: 10, marginTop: 16, alignItems: "center" }}>
-                <button onClick={publish} style={btnPink}>
-                  Trece notele în fișe
-                </button>
-                <span style={{ fontSize: 12, color: color.mutedLight }}>Notele completate apar în secțiunea Note a fiecărui elev.</span>
-              </div>
+              {!ev.closed && (
+                <div style={{ display: "flex", gap: 10, marginTop: 16, alignItems: "center" }}>
+                  <button onClick={publish} style={btnPink}>
+                    Trece notele în fișe
+                  </button>
+                  <span style={{ fontSize: 12, color: color.mutedLight }}>Notele completate apar în secțiunea Note a fiecărui elev.</span>
+                </div>
+              )}
             </div>
           )}
         </div>
       </div>
+
+      {reopenStage === 1 && (
+        <ConfirmDialog
+          title="Redeschizi evaluarea?"
+          message="Notele au fost deja trecute în fișele elevilor. Redeschiderea permite modificarea lor — trebuie confirmată de două ori."
+          confirmLabel="Continuă"
+          onCancel={() => setReopenStage(0)}
+          onConfirm={() => setReopenStage(2)}
+        />
+      )}
+      {reopenStage === 2 && (
+        <ConfirmDialog
+          title="Confirmă din nou"
+          message="Ești absolut sigur? Notele deja trecute în fișe NU se șterg automat — dacă modifici o notă aici, va trebui să apeși din nou „Trece notele în fișe” ca fișa elevului să reflecte schimbarea."
+          confirmLabel="Da, redeschide"
+          onCancel={() => setReopenStage(0)}
+          onConfirm={reopen}
+        />
+      )}
     </div>
   );
 }

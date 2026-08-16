@@ -171,7 +171,7 @@ export async function listEvals(): Promise<Evaluation[]> {
   return db.select<Evaluation[]>("SELECT * FROM evals ORDER BY data DESC");
 }
 
-export type EvalInput = Omit<Evaluation, "id">;
+export type EvalInput = Omit<Evaluation, "id" | "closed">;
 
 export async function createEval(input: EvalInput): Promise<Evaluation> {
   const db = await getDb();
@@ -180,7 +180,7 @@ export async function createEval(input: EvalInput): Promise<Evaluation> {
     `INSERT INTO evals (id, titlu, materie, data, ora, clasa, descriere) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
     [id, input.titlu, input.materie, input.data, input.ora, input.clasa, input.descriere]
   );
-  return { id, ...input };
+  return { id, closed: 0, ...input };
 }
 
 export async function updateEval(id: string, patch: Partial<EvalInput>): Promise<void> {
@@ -236,8 +236,15 @@ export async function setEvalGrade(evalId: string, studentId: string, nota: stri
   await db.execute("UPDATE eval_students SET nota = $1 WHERE eval_id = $2 AND student_id = $3", [nota, evalId, studentId]);
 }
 
+export async function reopenEval(evalId: string): Promise<void> {
+  const db = await getDb();
+  await db.execute("UPDATE evals SET closed = 0 WHERE id = $1", [evalId]);
+}
+
 /** Copies every completed nota from an evaluation's roster into that student's
- *  grades (replacing any grade previously published from this eval). */
+ *  grades (replacing any grade previously published from this eval), then
+ *  closes the evaluation — editing the roster/notes again requires reopening
+ *  it first. Leaves the evaluation open if nothing was actually published. */
 export async function publishEval(evalId: string): Promise<number> {
   const db = await getDb();
   const ev = (await db.select<Evaluation[]>("SELECT * FROM evals WHERE id = $1", [evalId]))[0];
@@ -253,5 +260,6 @@ export async function publishEval(evalId: string): Promise<number> {
     );
     n++;
   }
+  if (n > 0) await db.execute("UPDATE evals SET closed = 1 WHERE id = $1", [evalId]);
   return n;
 }

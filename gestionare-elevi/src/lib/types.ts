@@ -48,6 +48,7 @@ export interface Evaluation {
   ora: string;
   clasa: string;
   descriere: string;
+  closed: number;
 }
 
 export interface EvalStudentRow {

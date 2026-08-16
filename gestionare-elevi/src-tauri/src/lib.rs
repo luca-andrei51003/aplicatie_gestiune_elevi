@@ -17,6 +17,12 @@ pub fn run() {
             sql: include_str!("../migrations/002_student_own_phone.sql"),
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 3,
+            description: "eval_closed",
+            sql: include_str!("../migrations/003_eval_closed.sql"),
+            kind: MigrationKind::Up,
+        },
     ];
 
     tauri::Builder::default()
