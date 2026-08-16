@@ -3,6 +3,7 @@ import * as db from "../lib/db";
 import type { Session } from "../lib/types";
 import { countWords, fmtDate } from "../lib/format";
 import { btnDanger, card, color, input, sectionLabel } from "../lib/ui";
+import DateField from "./DateField";
 
 const TOOLBAR: { label: string; title: string; cmd: string; arg?: string; weight: number; italic: boolean; underline: boolean }[] = [
   { label: "B", title: "Bold", cmd: "bold", weight: 700, italic: false, underline: false },
@@ -171,11 +172,10 @@ export default function SessionsPanel({ studentId, durataImplicita = 45 }: { stu
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
               <label style={fieldLabel}>
                 Data
-                <input
-                  type="date"
+                <DateField
                   value={selected.data}
-                  onChange={(e) => patchField({ data: e.target.value })}
-                  style={{ ...input, textTransform: "none", letterSpacing: 0, fontWeight: 500, width: "auto" }}
+                  onChange={(iso) => patchField({ data: iso })}
+                  style={{ textTransform: "none", letterSpacing: 0, fontWeight: 500, width: 130 }}
                 />
               </label>
               <label style={fieldLabel}>

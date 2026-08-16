@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import * as db from "../lib/db";
 import type { Evaluation, Meeting, Student } from "../lib/types";
 import { MONTHS_LONG, todayIso } from "../lib/format";
-import { badge, btnGhost, btnPink, btnPinkGhost, card, color } from "../lib/ui";
+import { badge, btnPink, btnPinkGhost, card, color } from "../lib/ui";
 
 const MONTHS_SHORT = ["ian", "feb", "mar", "apr", "mai", "iun", "iul", "aug", "sep", "oct", "nov", "dec"];
 const WEEK_DAYS = ["L", "Ma", "Mi", "J", "V", "S", "D"];
@@ -14,7 +14,6 @@ export default function MeetingsView({
   onRefresh,
   onNewMeeting,
   onOpenStudent,
-  flash,
 }: {
   meetings: Meeting[];
   evals: Evaluation[];
@@ -22,7 +21,6 @@ export default function MeetingsView({
   onRefresh: () => Promise<void> | void;
   onNewMeeting: () => void;
   onOpenStudent: (id: string) => void;
-  flash: (msg: string) => void;
 }) {
   const now = new Date();
   const [calYear, setCalYear] = useState(now.getFullYear());
@@ -35,11 +33,6 @@ export default function MeetingsView({
     () => meetings.slice().sort((a, b) => (a.data + a.ora).localeCompare(b.data + b.ora)),
     [meetings]
   );
-
-  async function invite(m: Meeting) {
-    const s = studentOf(m.student_id);
-    flash(s && s.email ? "Invitație trimisă părintelui lui " + s.nume : "Elevul nu are e-mail de contact în fișă");
-  }
 
   async function toggleStatus(m: Meeting) {
     const confirmed = m.status === "Confirmată";
@@ -154,9 +147,6 @@ export default function MeetingsView({
                   </div>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 7, marginLeft: "auto" }}>
-                  <button onClick={() => invite(m)} style={{ ...btnGhost, whiteSpace: "nowrap" }}>
-                    Trimite invitație
-                  </button>
                   <button onClick={() => toggleStatus(m)} style={{ ...btnPinkGhost, whiteSpace: "nowrap" }}>
                     {confirmed ? "Marchează neconfirmată" : "Confirmă"}
                   </button>

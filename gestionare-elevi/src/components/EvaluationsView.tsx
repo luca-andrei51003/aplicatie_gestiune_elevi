@@ -5,6 +5,7 @@ import { fmtDate, fmtGrade, gradeColors } from "../lib/format";
 import { badge, btnDanger, btnGhost, btnPink, btnPrimary, card, color, input, sectionLabel } from "../lib/ui";
 import DeleteButton from "./DeleteButton";
 import ConfirmDialog from "./ConfirmDialog";
+import DateField from "./DateField";
 
 export default function EvaluationsView({
   evals,
@@ -210,12 +211,11 @@ export default function EvaluationsView({
                 </label>
                 <label style={{ ...sectionLabel, display: "flex", flexDirection: "column", gap: 5 }}>
                   Data
-                  <input
-                    type="date"
-                    defaultValue={ev.data}
+                  <DateField
+                    value={ev.data}
+                    onChange={(iso) => patchEval({ data: iso })}
                     disabled={!!ev.closed}
-                    onBlur={(e) => patchEval({ data: e.target.value })}
-                    style={{ ...input, textTransform: "none", letterSpacing: 0, fontWeight: 500, width: "auto", background: ev.closed ? "#f8fbfd" : "#fff" }}
+                    style={{ textTransform: "none", letterSpacing: 0, fontWeight: 500, width: 130, background: ev.closed ? "#f8fbfd" : "#fff" }}
                   />
                 </label>
                 <label style={{ ...sectionLabel, display: "flex", flexDirection: "column", gap: 5 }}>

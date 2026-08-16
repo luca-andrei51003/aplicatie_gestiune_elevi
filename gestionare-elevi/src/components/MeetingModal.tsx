@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { MeetingInput } from "../lib/db";
 import type { Student } from "../lib/types";
 import { btnGhost, btnPink, color, input, label, modalBackdrop, modalCard } from "../lib/ui";
+import DateField from "./DateField";
 
 export default function MeetingModal({
   students,
@@ -54,7 +55,7 @@ export default function MeetingModal({
           </label>
           <label style={label}>
             Data
-            <input type="date" style={input} value={data} onChange={(e) => setData(e.target.value)} />
+            <DateField value={data} onChange={setData} />
           </label>
           <label style={label}>
             Ora

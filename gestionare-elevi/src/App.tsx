@@ -203,7 +203,6 @@ function App() {
             onRefresh={refreshMeetings}
             onNewMeeting={newMeeting}
             onOpenStudent={openStudent}
-            flash={flash}
           />
         )}
 

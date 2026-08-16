@@ -6,6 +6,7 @@ import { average, fmtDate, fmtGrade, gradeColors, todayIso } from "../lib/format
 import { badge, btnGhost, btnPrimary, card, color, input, sectionLabel } from "../lib/ui";
 import DeleteButton from "./DeleteButton";
 import ConfirmDialog from "./ConfirmDialog";
+import DateField from "./DateField";
 
 export default function GradesPanel({
   student,
@@ -165,7 +166,7 @@ export default function GradesPanel({
           }}
         >
           <input value={materie} onChange={(e) => setMaterie(e.target.value)} placeholder="Materie" style={input} />
-          <input type="date" value={dataNota} onChange={(e) => setDataNota(e.target.value)} style={input} />
+          <DateField value={dataNota} onChange={setDataNota} />
           <select value={sursa} onChange={(e) => setSursa(e.target.value)} style={input}>
             <option>Oral</option>
             <option>Temă</option>
